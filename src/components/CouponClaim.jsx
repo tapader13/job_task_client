@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router';
 
 function CouponClaim() {
   const [coupon, setCoupon] = useState('');
@@ -31,10 +32,16 @@ function CouponClaim() {
         <div className='text-center'>
           <button
             onClick={claimCoupon}
-            className='w-full cursor-pointer py-3 px-6 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-300'
+            className='w-full mb-5 cursor-pointer py-3 px-6 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-300'
           >
             Claim Coupon
           </button>
+          <Link
+            to='/login'
+            className='w-full cursor-pointer py-3 px-6 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-300'
+          >
+            Login
+          </Link>
         </div>
         {message && (
           <p

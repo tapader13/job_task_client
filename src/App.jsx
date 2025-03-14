@@ -1,11 +1,8 @@
 import './App.css';
+import CouponClaim from './components/CouponClaim';
 
 function App() {
-  return (
-    <>
-      <h1>Vite + React</h1>
-    </>
-  );
+  return <CouponClaim />;
 }
 
 export default App;

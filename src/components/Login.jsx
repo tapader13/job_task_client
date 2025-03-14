@@ -20,6 +20,8 @@ export default function AdminDashboard() {
   // Dashboard states
   const [activeTab, setActiveTab] = useState('coupons');
   const [coupons, setCoupons] = useState([]);
+  const [history, setHistory] = useState([]);
+
   const [isAddingCoupon, setIsAddingCoupon] = useState(false);
   const [newCoupon, setNewCoupon] = useState({
     code: '',
@@ -27,7 +29,7 @@ export default function AdminDashboard() {
     isClame: false,
   });
   const [editingCoupon, setEditingCoupon] = useState(null);
-
+  console.log(coupons);
   // Fetch coupons on component mount
   useEffect(() => {
     const fetchAllCoupons = async () => {
@@ -68,7 +70,22 @@ export default function AdminDashboard() {
     setPassword('');
     setMessage('');
   };
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/admin/history');
+        setHistory(res.data);
+      } catch (error) {
+        console.error('Failed to fetch history:', error);
+        setMessage('Failed to fetch history');
+      }
+    };
 
+    if (adminLoggedIn && activeTab === 'history') {
+      fetchHistory();
+    }
+  }, [adminLoggedIn, activeTab]);
+  console.log(history, 'history');
   // Coupon management functions
   const toggleCouponActive = async (id) => {
     try {
@@ -103,8 +120,20 @@ export default function AdminDashboard() {
         'http://localhost:5000/admin/coupons',
         newCoupon
       );
+
+      const fetchAllCoupons = async () => {
+        try {
+          const res = await axios.get('http://localhost:5000/admin/coupons');
+          setCoupons(res.data);
+        } catch (error) {
+          console.error('Failed to fetch coupons:', error);
+          setMessage('Failed to fetch coupons');
+        }
+      };
+
+      fetchAllCoupons();
+
       console.log(res);
-      setCoupons([...coupons, newCoupon]);
       setNewCoupon({ code: '', isActive: true, isClame: false });
       setIsAddingCoupon(false);
       setMessage('Coupon added successfully!');
@@ -494,10 +523,7 @@ export default function AdminDashboard() {
                     Coupon Code
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                    User ID
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                    IP Address
+                    User IP
                   </th>
                   <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
                     Claimed Date
@@ -505,38 +531,39 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className='bg-white divide-y divide-gray-200'>
-                {coupons
-                  .filter((coupon) => coupon.isClame)
-                  .map((coupon) => (
-                    <tr key={coupon.id}>
-                      <td className='px-6 py-4 whitespace-nowrap'>
-                        <div className='text-sm font-medium text-gray-900'>
-                          {coupon.code}
-                        </div>
-                      </td>
-                      <td className='px-6 py-4 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>
-                          user_{Math.floor(Math.random() * 1000)}
-                        </div>
-                      </td>
-                      <td className='px-6 py-4 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>
-                          192.168.1.{Math.floor(Math.random() * 255)}
-                        </div>
-                      </td>
-                      <td className='px-6 py-4 whitespace-nowrap'>
-                        <div className='text-sm text-gray-900'>
-                          {new Date(
-                            Date.now() - Math.floor(Math.random() * 10000000000)
-                          ).toLocaleDateString()}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                {!coupons.some((coupon) => coupon.isClame) && (
+                {history.length > 0 &&
+                  history.map((user) =>
+                    user.coupons.map((coupon) => (
+                      <tr key={coupon._id}>
+                        <td className='px-6 py-4 whitespace-nowrap'>
+                          <div className='text-sm font-medium text-gray-900'>
+                            {coupon.code}
+                          </div>
+                        </td>
+                        <td className='px-6 py-4 whitespace-nowrap'>
+                          <div className='text-sm text-gray-900'>
+                            {user._id}
+                          </div>
+                        </td>
+                        <td className='px-6 py-4 whitespace-nowrap'>
+                          <div className='text-sm text-gray-900'>
+                            {coupon.isClaimed
+                              ? new Date(
+                                  Date.now() -
+                                    Math.floor(Math.random() * 10000000000)
+                                ).toLocaleDateString()
+                              : 'Not Claimed'}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                {history.every((user) =>
+                  user.coupons.every((coupon) => !coupon.isClaimed)
+                ) && (
                   <tr>
                     <td
-                      colSpan={4}
+                      colSpan={3}
                       className='px-6 py-4 text-center text-sm text-gray-500'
                     >
                       No claim history found

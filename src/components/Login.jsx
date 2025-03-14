@@ -118,8 +118,9 @@ export default function AdminDashboard() {
     if (!editingCoupon) return;
 
     try {
+      console.log(editingCoupon, 12);
       await axios.put(
-        `http://localhost:5000/admin/coupons/${editingCoupon.id}`,
+        `http://localhost:5000/admin/coupons/${editingCoupon._id}`,
         editingCoupon
       );
 

@@ -72,14 +72,15 @@ export default function AdminDashboard() {
   // Coupon management functions
   const toggleCouponActive = async (id) => {
     try {
-      const coupon = coupons.find((c) => c.id === id);
-      await axios.patch(`http://localhost:5000/admin/coupons/${id}`, {
+      const coupon = coupons.find((c) => c._id === id);
+      console.log(coupon, id, 45);
+      await axios.patch(`http://localhost:5000/admin/coupons/${coupon._id}`, {
         isActive: !coupon.isActive,
       });
 
       setCoupons(
         coupons.map((coupon) =>
-          coupon.id === id ? { ...coupon, isActive: !coupon.isActive } : coupon
+          coupon._id === id ? { ...coupon, isActive: !coupon.isActive } : coupon
         )
       );
 
@@ -414,8 +415,8 @@ export default function AdminDashboard() {
                         </td>
                         <td className='px-6 py-4 whitespace-nowrap'>
                           <button
-                            onClick={() => toggleCouponActive(coupon.id)}
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            onClick={() => toggleCouponActive(coupon._id)}
+                            className={`inline-flex cursor-pointer items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                               coupon.isActive
                                 ? 'bg-green-100 text-green-800'
                                 : 'bg-red-100 text-red-800'

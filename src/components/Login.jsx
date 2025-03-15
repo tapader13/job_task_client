@@ -45,11 +45,27 @@ export default function AdminDashboard() {
       }
     };
 
-    if (adminLoggedIn && activeTab === 'coupons') {
+    if (adminLoggedIn) {
       fetchAllCoupons();
     }
   }, [activeTab]);
+  useEffect(() => {
+    const fetchAllCoupons = async () => {
+      try {
+        const res = await axios.get(
+          'https://job-task-server-ec8s.onrender.com/admin/coupons'
+        );
+        setCoupons(res.data);
+      } catch (error) {
+        console.error('Failed to fetch coupons:', error);
+        setMessage('Failed to fetch coupons');
+      }
+    };
 
+    if (adminLoggedIn && activeTab === 'coupons') {
+      fetchAllCoupons();
+    }
+  }, [adminLoggedIn]);
   // Login function
   const handleLogin = async () => {
     try {

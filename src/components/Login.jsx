@@ -8,6 +8,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import axios from 'axios';
+import { Link } from 'react-router';
 
 export default function AdminDashboard() {
   // Authentication states
@@ -45,7 +46,7 @@ export default function AdminDashboard() {
     if (adminLoggedIn) {
       fetchAllCoupons();
     }
-  }, [adminLoggedIn]);
+  }, [adminLoggedIn, activeTab]);
 
   // Login function
   const handleLogin = async () => {
@@ -54,17 +55,25 @@ export default function AdminDashboard() {
         username,
         password,
       });
-
+      console.log(res.data.token, 'success');
       setToken(res.data.token);
+      localStorage.setItem('token', res.data.token);
       setAdminLoggedIn(true);
       setMessage('Login successful!');
     } catch (err) {
       setMessage('Login failed. ' + (err.response?.data?.message || ''));
     }
   };
-
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setToken(token);
+      setAdminLoggedIn(true);
+    }
+  }, [token]);
   const handleLogout = () => {
     setAdminLoggedIn(false);
+    localStorage.removeItem('token');
     setToken('');
     setUsername('');
     setPassword('');
@@ -196,7 +205,7 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={handleLogin}
-            className='w-full py-3 px-6 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-300'
+            className='w-full py-3 cursor-pointer px-6 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-300'
           >
             Login
           </button>
@@ -211,6 +220,12 @@ export default function AdminDashboard() {
               {message}
             </p>
           )}
+          <p className='mt-4 text-center'>
+            Want to claim a coupon?{' '}
+            <Link to='/' className='text-blue-500 hover:underline'>
+              Home
+            </Link>
+          </p>
         </div>
       </div>
     );
@@ -227,7 +242,7 @@ export default function AdminDashboard() {
           </h1>
           <button
             onClick={handleLogout}
-            className='flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition'
+            className='flex items-center cursor-pointer gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition'
           >
             <LogOut size={18} />
             <span>Logout</span>
@@ -286,7 +301,7 @@ export default function AdminDashboard() {
             <div className='flex justify-between items-center mb-6'>
               <button
                 onClick={() => setIsAddingCoupon(true)}
-                className='flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition'
+                className='flex items-center cursor-pointer gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition'
               >
                 <Plus size={18} />
                 <span>Add Coupon</span>
@@ -398,7 +413,7 @@ export default function AdminDashboard() {
                       setIsAddingCoupon(false);
                       setEditingCoupon(null);
                     }}
-                    className='px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition'
+                    className='px-4 py-2 cursor-pointer bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition'
                   >
                     Cancel
                   </button>
@@ -406,7 +421,7 @@ export default function AdminDashboard() {
                     onClick={
                       isAddingCoupon ? handleAddCoupon : handleUpdateCoupon
                     }
-                    className='px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition'
+                    className='px-4 cursor-pointer py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition'
                   >
                     {isAddingCoupon ? 'Add Coupon' : 'Update Coupon'}
                   </button>
@@ -547,29 +562,14 @@ export default function AdminDashboard() {
                         </td>
                         <td className='px-6 py-4 whitespace-nowrap'>
                           <div className='text-sm text-gray-900'>
-                            {coupon.isClaimed
-                              ? new Date(
-                                  Date.now() -
-                                    Math.floor(Math.random() * 10000000000)
-                                ).toLocaleDateString()
+                            {coupon.isClame
+                              ? new Date(coupon.claimTime).toLocaleString()
                               : 'Not Claimed'}
                           </div>
                         </td>
                       </tr>
                     ))
                   )}
-                {history.every((user) =>
-                  user.coupons.every((coupon) => !coupon.isClaimed)
-                ) && (
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className='px-6 py-4 text-center text-sm text-gray-500'
-                    >
-                      No claim history found
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>

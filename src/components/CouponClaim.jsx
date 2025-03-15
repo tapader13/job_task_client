@@ -12,9 +12,12 @@ function CouponClaim() {
         .get('https://api.ipify.org?format=json')
         .then((res) => res.data.ip);
 
-      const res = await axios.post('http://localhost:5000/claim', {
-        ip,
-      });
+      const res = await axios.post(
+        'https://job-task-server-ec8s.onrender.com/claim',
+        { ip },
+        { withCredentials: true }
+      );
+
       console.log(res);
       setCoupon(res.data.coupon);
       setMessage(res.data.message);

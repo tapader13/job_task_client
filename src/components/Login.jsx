@@ -35,7 +35,9 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchAllCoupons = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/admin/coupons');
+        const res = await axios.get(
+          'https://job-task-server-ec8s.onrender.com/admin/coupons'
+        );
         setCoupons(res.data);
       } catch (error) {
         console.error('Failed to fetch coupons:', error);
@@ -46,15 +48,18 @@ export default function AdminDashboard() {
     if (adminLoggedIn) {
       fetchAllCoupons();
     }
-  }, [adminLoggedIn, activeTab]);
+  }, [activeTab]);
 
   // Login function
   const handleLogin = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/admin/login', {
-        username,
-        password,
-      });
+      const res = await axios.post(
+        'https://job-task-server-ec8s.onrender.com/admin/login',
+        {
+          username,
+          password,
+        }
+      );
       console.log(res.data.token, 'success');
       setToken(res.data.token);
       localStorage.setItem('token', res.data.token);
@@ -82,7 +87,9 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/admin/history');
+        const res = await axios.get(
+          'https://job-task-server-ec8s.onrender.com/admin/history'
+        );
         setHistory(res.data);
       } catch (error) {
         console.error('Failed to fetch history:', error);
@@ -90,19 +97,22 @@ export default function AdminDashboard() {
       }
     };
 
-    if (adminLoggedIn && activeTab === 'history') {
+    if (activeTab === 'history') {
       fetchHistory();
     }
-  }, [adminLoggedIn, activeTab]);
+  }, [activeTab]);
   console.log(history, 'history');
   // Coupon management functions
   const toggleCouponActive = async (id) => {
     try {
       const coupon = coupons.find((c) => c._id === id);
       console.log(coupon, id, 45);
-      await axios.patch(`http://localhost:5000/admin/coupons/${coupon._id}`, {
-        isActive: !coupon.isActive,
-      });
+      await axios.patch(
+        `https://job-task-server-ec8s.onrender.com/admin/coupons/${coupon._id}`,
+        {
+          isActive: !coupon.isActive,
+        }
+      );
 
       setCoupons(
         coupons.map((coupon) =>
@@ -126,13 +136,15 @@ export default function AdminDashboard() {
 
     try {
       const res = await axios.post(
-        'http://localhost:5000/admin/coupons',
+        'https://job-task-server-ec8s.onrender.com/admin/coupons',
         newCoupon
       );
 
       const fetchAllCoupons = async () => {
         try {
-          const res = await axios.get('http://localhost:5000/admin/coupons');
+          const res = await axios.get(
+            'https://job-task-server-ec8s.onrender.com/admin/coupons'
+          );
           setCoupons(res.data);
         } catch (error) {
           console.error('Failed to fetch coupons:', error);
@@ -159,13 +171,13 @@ export default function AdminDashboard() {
     try {
       console.log(editingCoupon, 12);
       await axios.put(
-        `http://localhost:5000/admin/coupons/${editingCoupon._id}`,
+        `https://job-task-server-ec8s.onrender.com/admin/coupons/${editingCoupon._id}`,
         editingCoupon
       );
 
       setCoupons(
         coupons.map((coupon) =>
-          coupon.id === editingCoupon.id ? editingCoupon : coupon
+          coupon._id === editingCoupon._id ? editingCoupon : coupon
         )
       );
 

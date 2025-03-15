@@ -18,7 +18,7 @@ function CouponClaim() {
         { withCredentials: true }
       );
 
-      console.log(res);
+      // console.log(res);
       setCoupon(res.data.coupon);
       setMessage(res.data.message);
     } catch (err) {

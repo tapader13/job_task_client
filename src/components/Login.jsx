@@ -30,7 +30,7 @@ export default function AdminDashboard() {
     isClame: false,
   });
   const [editingCoupon, setEditingCoupon] = useState(null);
-  console.log(coupons);
+  // console.log(coupons);
   // Fetch coupons on component mount
   useEffect(() => {
     const fetchAllCoupons = async () => {
@@ -76,7 +76,7 @@ export default function AdminDashboard() {
           password,
         }
       );
-      console.log(res.data.token, 'success');
+      // console.log(res.data.token, 'success');
       setToken(res.data.token);
       localStorage.setItem('token', res.data.token);
       setAdminLoggedIn(true);
@@ -117,12 +117,12 @@ export default function AdminDashboard() {
       fetchHistory();
     }
   }, [activeTab]);
-  console.log(history, 'history');
+  // console.log(history, 'history');
   // Coupon management functions
   const toggleCouponActive = async (id) => {
     try {
       const coupon = coupons.find((c) => c._id === id);
-      console.log(coupon, id, 45);
+      // console.log(coupon, id, 45);
       await axios.patch(
         `https://job-task-server-ec8s.onrender.com/admin/coupons/${coupon._id}`,
         {
@@ -170,7 +170,7 @@ export default function AdminDashboard() {
 
       fetchAllCoupons();
 
-      console.log(res);
+      // console.log(res);
       setNewCoupon({ code: '', isActive: true, isClame: false });
       setIsAddingCoupon(false);
       setMessage('Coupon added successfully!');
@@ -185,7 +185,7 @@ export default function AdminDashboard() {
     if (!editingCoupon) return;
 
     try {
-      console.log(editingCoupon, 12);
+      // console.log(editingCoupon, 12);
       await axios.put(
         `https://job-task-server-ec8s.onrender.com/admin/coupons/${editingCoupon._id}`,
         editingCoupon

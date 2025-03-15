@@ -45,7 +45,7 @@ export default function AdminDashboard() {
       }
     };
 
-    if (adminLoggedIn) {
+    if (adminLoggedIn && activeTab === 'coupons') {
       fetchAllCoupons();
     }
   }, [activeTab]);
